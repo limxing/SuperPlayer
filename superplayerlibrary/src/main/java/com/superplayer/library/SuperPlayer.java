@@ -237,6 +237,9 @@ public class SuperPlayer extends RelativeLayout {
             $.id(R.id.view_jky_player_center_play).image(
                     R.drawable.jc_click_play_selector);
         }
+        if (status == STATUS_LOADING) {
+            $.id(R.id.view_jky_player_center_control).visibility(View.GONE);
+        }
     }
 
     /**
@@ -255,7 +258,7 @@ public class SuperPlayer extends RelativeLayout {
             } else {
                 showTopControl(true);
             }
-            if (isShowCenterControl) {
+            if (isShowCenterControl && status != STATUS_LOADING) {
                 $.id(R.id.view_jky_player_center_control).visible();
             }
             showBottomControl(true);
@@ -264,7 +267,7 @@ public class SuperPlayer extends RelativeLayout {
             }
             isShowing = true;
         }
-//        updatePausePlay();
+        updatePausePlay();
         handler.sendEmptyMessage(MESSAGE_SHOW_PROGRESS);
         handler.removeMessages(MESSAGE_FADE_OUT);
         if (timeout != 0) {
@@ -583,6 +586,8 @@ public class SuperPlayer extends RelativeLayout {
         } else if (newStatus == STATUS_PLAYING) {
 //            hideAll();
             $.id(R.id.app_video_loading).gone();
+            $.id(R.id.view_jky_player_tip_control).gone();
+
         }
 
     }
@@ -591,7 +596,8 @@ public class SuperPlayer extends RelativeLayout {
      * 隐藏全部的控件
      */
     private void hideAll() {
-        $.id(R.id.view_jky_player_center_control).gone();
+        if (status == STATUS_PLAYING)
+            $.id(R.id.view_jky_player_center_control).gone();
         $.id(R.id.app_video_loading).gone();
         $.id(R.id.view_jky_player_fullscreen).invisible();
         $.id(R.id.view_jky_player_tip_control).gone();
@@ -934,7 +940,7 @@ public class SuperPlayer extends RelativeLayout {
         int showDelta = (int) delta / 1000;
         if (showDelta != 0) {
             $.id(R.id.app_video_fastForward_box).visible();
-            int image=showDelta>0?R.drawable.jc_forward_icon:R.drawable.jc_backward_icon;
+            int image = showDelta > 0 ? R.drawable.jc_forward_icon : R.drawable.jc_backward_icon;
 //            String text = showDelta > 0 ? ("+" + showDelta) : "" + showDelta;
 //            $.id(R.id.app_video_fastForward).text(text + "s");
             $.id(R.id.app_video_fastForward).image(image);
@@ -1005,7 +1011,7 @@ public class SuperPlayer extends RelativeLayout {
             $.id(R.id.view_jky_player_fullscreen).invisible();
             isShowing = false;
         }
-        if (status == STATUS_PAUSE)
+        if (status != STATUS_PLAYING)
             $.id(R.id.view_jky_player_center_control).visible();
 
 

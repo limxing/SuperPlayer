@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements SuperPlayer.OnNet
                 .setOnNetChangeListener(this)//实现网络变化的回调
                 .setShowNavIcon(false)
                 .showCenterControl(true)
+                .setCompleteToSmall(true)
                 .setOrientationChangeListener(false)
                 .onPrepared(new SuperPlayer.OnPreparedListener() {
                     @Override

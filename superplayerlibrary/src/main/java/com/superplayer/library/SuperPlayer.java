@@ -215,6 +215,7 @@ public class SuperPlayer extends RelativeLayout {
             statusChange(STATUS_PAUSE);
             videoView.pause();
         } else {
+            statusChange(STATUS_PLAYING);
             videoView.start();
         }
         updatePausePlay();
@@ -577,8 +578,11 @@ public class SuperPlayer extends RelativeLayout {
         } else if (newStatus == STATUS_LOADING) {
             hideAll();
             $.id(R.id.app_video_loading).visible();
+            $.id(R.id.view_jky_player_center_control).gone();
+
         } else if (newStatus == STATUS_PLAYING) {
-            hideAll();
+//            hideAll();
+            $.id(R.id.app_video_loading).gone();
         }
 
     }
@@ -999,6 +1003,10 @@ public class SuperPlayer extends RelativeLayout {
             $.id(R.id.view_jky_player_fullscreen).invisible();
             isShowing = false;
         }
+        if (status == STATUS_PAUSE)
+            $.id(R.id.view_jky_player_center_control).visible();
+
+
     }
 
     /**
@@ -1061,7 +1069,7 @@ public class SuperPlayer extends RelativeLayout {
      */
     public SuperPlayer setShowNavIcon(boolean show) {
         this.showNavIcon = show;
-//        $.id(R.id.app_video_finish).visibility(show ? View.VISIBLE : View.GONE);
+        $.id(R.id.app_video_finish).visibility(show ? View.VISIBLE : View.GONE);
         return this;
     }
 
@@ -1580,6 +1588,7 @@ public class SuperPlayer extends RelativeLayout {
 
     /**
      * 设置是否完成后返回小窗口，默认不反回
+     *
      * @param completeToSmall
      * @return
      */

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="45dp"
     android:layout_alignParentBottom="true"
-    android:background="#88000000"
+    android:background="@drawable/uvv_titlebar_bg_bottom"
     android:visibility="gone" >
 
     <LinearLayout
@@ -53,8 +53,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
         android:layout_toLeftOf="@+id/app_video_endTime"
         android:layout_toRightOf="@+id/app_video_currentTime" />
 
@@ -75,6 +75,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:padding="8dp"
-        android:src="@drawable/ic_enlarge" />
+        android:src="@drawable/jc_enlarge" />
 
 </RelativeLayout>

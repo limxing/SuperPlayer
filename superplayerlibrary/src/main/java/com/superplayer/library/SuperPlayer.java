@@ -41,7 +41,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * 类描述：视频播放控制类
  *
  * @author Super南仔
- * @time 2016-9-19
+ *         2016-9-19
  */
 public class SuperPlayer extends RelativeLayout {
     /**
@@ -117,12 +117,15 @@ public class SuperPlayer extends RelativeLayout {
     private NetChangeReceiver netChangeReceiver;
     private OnNetChangeListener onNetChangeListener;
 
-    private OrientationEventListener orientationEventListener;
+    //    private OrientationEventListener orientationEventListener;
     private int defaultTimeout = 3000;
     private int screenWidthPixels;
 
     private int initWidth = 0;
     private int initHeight = 0;
+    private boolean isOrientationChangeListener;
+    private boolean showNavIcon;
+    private boolean isCompleteToSmall;
 
     public SuperPlayer(Context context) {
         this(context, null);
@@ -221,16 +224,17 @@ public class SuperPlayer extends RelativeLayout {
      * 更新暂停状态的控件显示
      */
     private void updatePausePlay() {
+
         $.id(R.id.view_jky_player_center_control).visibility(
                 isShowCenterControl ? View.VISIBLE : View.GONE);
         if (videoView.isPlaying()) {
             $.id(R.id.app_video_play).image(R.drawable.ic_pause);
             $.id(R.id.view_jky_player_center_play).image(
-                    R.drawable.ic_center_pause);
+                    R.drawable.jc_click_pause_selector);
         } else {
             $.id(R.id.app_video_play).image(R.drawable.ic_play);
             $.id(R.id.view_jky_player_center_play).image(
-                    R.drawable.ic_center_play);
+                    R.drawable.jc_click_play_selector);
         }
     }
 
@@ -259,7 +263,7 @@ public class SuperPlayer extends RelativeLayout {
             }
             isShowing = true;
         }
-        updatePausePlay();
+//        updatePausePlay();
         handler.sendEmptyMessage(MESSAGE_SHOW_PROGRESS);
         handler.removeMessages(MESSAGE_FADE_OUT);
         if (timeout != 0) {
@@ -490,25 +494,25 @@ public class SuperPlayer extends RelativeLayout {
         /**
          * 监听手机重力感应的切换屏幕的方向
          */
-        orientationEventListener = new OrientationEventListener(activity) {
-            @Override
-            public void onOrientationChanged(int orientation) {
-                if (orientation >= 0 && orientation <= 30 || orientation >= 330
-                        || (orientation >= 150 && orientation <= 210)) {
-                    // 竖屏
-                    if (portrait) {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-                        orientationEventListener.disable();
-                    }
-                } else if ((orientation >= 90 && orientation <= 120)
-                        || (orientation >= 240 && orientation <= 300)) {
-                    if (!portrait) {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-                        orientationEventListener.disable();
-                    }
-                }
-            }
-        };
+//        orientationEventListener = new OrientationEventListener(activity) {
+//            @Override
+//            public void onOrientationChanged(int orientation) {
+//                if (orientation >= 0 && orientation <= 30 || orientation >= 330
+//                        || (orientation >= 150 && orientation <= 210)) {
+//                    // 竖屏
+//                    if (portrait) {
+//                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+//                        orientationEventListener.disable();
+//                    }
+//                } else if ((orientation >= 90 && orientation <= 120)
+//                        || (orientation >= 240 && orientation <= 300)) {
+//                    if (!portrait) {
+//                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+//                        orientationEventListener.disable();
+//                    }
+//                }
+//            }
+//        };
 
         if (fullScreenOnly) {
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -546,9 +550,14 @@ public class SuperPlayer extends RelativeLayout {
         if (!isLive && newStatus == STATUS_COMPLETED) {// 当视频播放完成的时候
             handler.removeMessages(MESSAGE_SHOW_PROGRESS);
             hideAll();
+
             if (isShowCenterControl) {
                 $.id(R.id.view_jky_player_center_control).visible();
+                $.id(R.id.view_jky_player_center_play).image(
+                        R.drawable.jc_click_play_selector);
             }
+            if (isCompleteToSmall && getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+                toggleFullScreen();
         } else if (newStatus == STATUS_ERROR) {
             handler.removeMessages(MESSAGE_SHOW_PROGRESS);
             hideAll();
@@ -622,6 +631,11 @@ public class SuperPlayer extends RelativeLayout {
     @Override
     public void onConfigurationChanged(final Configuration newConfig) {
         portrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT;
+        if (portrait) {
+            $.id(R.id.app_video_finish).visibility(showNavIcon ? View.VISIBLE : View.GONE);
+        } else {
+            $.id(R.id.app_video_finish).visibility(View.VISIBLE);
+        }
         doOnConfigurationChanged(portrait);
     }
 
@@ -658,7 +672,7 @@ public class SuperPlayer extends RelativeLayout {
                     updateFullScreenButton();
                 }
             });
-            orientationEventListener.enable();
+//            orientationEventListener.enable();
         }
     }
 
@@ -717,7 +731,7 @@ public class SuperPlayer extends RelativeLayout {
      */
     public void onDestroy() {
         unregisterNetReceiver();// 取消网络变化的监听
-        orientationEventListener.disable();
+//        orientationEventListener.disable();
         handler.removeCallbacksAndMessages(null);
         videoView.stopPlayback();
     }
@@ -746,9 +760,10 @@ public class SuperPlayer extends RelativeLayout {
     }
 
     /**
+     * 一般用于记录上次播放的位置或者切换视频
+     *
      * @param url             开始播放(可播放指定位置)
      * @param currentPosition 指定位置的大小(0-1000)
-     * @see （一般用于记录上次播放的位置或者切换视频源）
      */
     public void play(String url, int currentPosition) {
         this.url = url;
@@ -768,6 +783,7 @@ public class SuperPlayer extends RelativeLayout {
         } else {
             if (playerSupport) {
                 $.id(R.id.app_video_loading).visible();
+
                 videoView.setVideoPath(url);
                 if (isLive) {
                     videoView.seekTo(0);
@@ -991,11 +1007,11 @@ public class SuperPlayer extends RelativeLayout {
     private void updateFullScreenButton() {
         if (getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {// 全屏幕
             $.id(R.id.view_jky_player_fullscreen).image(
-                    R.drawable.ic_not_fullscreen);
+                    R.drawable.jc_shrink);
             $.id(R.id.view_jky_player_iv_share).gone();
             $.id(R.id.view_jky_play_iv_setting).visible();
         } else {
-            $.id(R.id.view_jky_player_fullscreen).image(R.drawable.ic_enlarge);
+            $.id(R.id.view_jky_player_fullscreen).image(R.drawable.jc_enlarge);
             $.id(R.id.view_jky_player_iv_share).visible();
             $.id(R.id.view_jky_play_iv_setting).gone();
         }
@@ -1043,8 +1059,10 @@ public class SuperPlayer extends RelativeLayout {
      *
      * @param show
      */
-    public void setShowNavIcon(boolean show) {
-        $.id(R.id.app_video_finish).visibility(show ? View.VISIBLE : View.GONE);
+    public SuperPlayer setShowNavIcon(boolean show) {
+        this.showNavIcon = show;
+//        $.id(R.id.app_video_finish).visibility(show ? View.VISIBLE : View.GONE);
+        return this;
     }
 
     public void start() {
@@ -1515,7 +1533,8 @@ public class SuperPlayer extends RelativeLayout {
 
     /**
      * 设置了竖屏的时候播放器的宽高
-     * @param width 0：默认是屏幕的宽度
+     *
+     * @param width  0：默认是屏幕的宽度
      * @param height 0：默认是宽度的16:9
      * @return
      */
@@ -1544,4 +1563,28 @@ public class SuperPlayer extends RelativeLayout {
         return activity.findViewById(ViewId);
     }
 
+
+    /**
+     * 设置是否监听屏幕旋转
+     *
+     * @return
+     */
+    public boolean isOrientationChangeListener() {
+        return isOrientationChangeListener;
+    }
+
+    public SuperPlayer setOrientationChangeListener(boolean orientationChangeListener) {
+        isOrientationChangeListener = orientationChangeListener;
+        return this;
+    }
+
+    /**
+     * 设置是否完成后返回小窗口，默认不反回
+     * @param completeToSmall
+     * @return
+     */
+    public SuperPlayer setCompleteToSmall(boolean completeToSmall) {
+        isCompleteToSmall = completeToSmall;
+        return this;
+    }
 }

@@ -6,7 +6,7 @@ import android.util.DisplayMetrics;
 /**
  *
  * @author Super南仔
- * @time 2016-9-19
+ *  2016-9-19
  */
 public class SuperPlayerUtils {
     /**

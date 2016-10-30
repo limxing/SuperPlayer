@@ -10,7 +10,7 @@ import android.telephony.TelephonyManager;
  * 类描述：网络链接类型判断
  * 
  * @author Super南仔
- * @time 2016-9-9
+ *  2016-9-9
  */
 public class NetUtils {
 

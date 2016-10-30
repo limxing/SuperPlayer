@@ -7,7 +7,7 @@ import android.content.Context;
  * 类描述：获取唯一的视频控制器
  *
  * @author Super南仔
- * @time 2016-9-19
+ *  2016-9-19
  */
 public class SuperPlayerManage {
     public static SuperPlayerManage videoPlayViewManage;

@@ -74,14 +74,20 @@
             android:orientation="vertical"
             android:visibility="gone" >
 
-            <TextView
+            <!--<TextView-->
+                <!--android:id="@+id/app_video_fastForward"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingTop="8dp"-->
+                <!--android:text="50%"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:textSize="16sp" />-->
+            <ImageView
                 android:id="@+id/app_video_fastForward"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
-                android:text="50%"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
+                />
 
             <LinearLayout
                 android:layout_width="wrap_content"

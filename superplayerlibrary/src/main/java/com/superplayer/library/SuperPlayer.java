@@ -579,7 +579,7 @@ public class SuperPlayer extends RelativeLayout {
             hideAll();
             $.id(R.id.app_video_loading).visible();
             $.id(R.id.view_jky_player_center_control).gone();
-
+            $.id(R.id.app_video_fastForward_box).gone();
         } else if (newStatus == STATUS_PLAYING) {
 //            hideAll();
             $.id(R.id.app_video_loading).gone();
@@ -934,8 +934,10 @@ public class SuperPlayer extends RelativeLayout {
         int showDelta = (int) delta / 1000;
         if (showDelta != 0) {
             $.id(R.id.app_video_fastForward_box).visible();
-            String text = showDelta > 0 ? ("+" + showDelta) : "" + showDelta;
-            $.id(R.id.app_video_fastForward).text(text + "s");
+            int image=showDelta>0?R.drawable.jc_forward_icon:R.drawable.jc_backward_icon;
+//            String text = showDelta > 0 ? ("+" + showDelta) : "" + showDelta;
+//            $.id(R.id.app_video_fastForward).text(text + "s");
+            $.id(R.id.app_video_fastForward).image(image);
             $.id(R.id.app_video_fastForward_target).text(
                     generateTime(newPosition) + "/");
             $.id(R.id.app_video_fastForward_all).text(generateTime(duration));

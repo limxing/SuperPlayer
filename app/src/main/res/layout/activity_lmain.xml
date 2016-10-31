@@ -10,17 +10,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="SuperVideoPlayer" />
-
-    <Button
-        android:onClick="universal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="UniversalVideo" />
-    <Button
-        android:onClick="jcVideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="JCVideoPlayer" />
+    
 </LinearLayout>

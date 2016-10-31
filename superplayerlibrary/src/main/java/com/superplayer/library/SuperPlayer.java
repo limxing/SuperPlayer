@@ -394,6 +394,15 @@ public class SuperPlayer extends RelativeLayout {
         video_cover.setImageBitmap(bitmap);
         return this;
     }
+    /**
+     * 设置封面
+     *
+     * @param res 资源文件
+     */
+    public SuperPlayer setCoverImage(int res) {
+        video_cover.setImageResource(res);
+        return this;
+    }
 
     /**
      * 获取封面控件

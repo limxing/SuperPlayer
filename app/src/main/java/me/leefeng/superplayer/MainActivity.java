@@ -4,6 +4,7 @@ import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.bumptech.glide.Glide;
 import com.superplayer.library.SuperPlayer;
 
 public class MainActivity extends AppCompatActivity implements SuperPlayer.OnNetChangeListener {
@@ -26,8 +27,8 @@ public class MainActivity extends AppCompatActivity implements SuperPlayer.OnNet
         }
         player.setNetChangeListener(true)//设置监听手机网络的变化
                 .setOnNetChangeListener(this)//实现网络变化的回调
-                .setShowNavIcon(false)
-                .showCenterControl(true)
+                .setShowNavIcon(false)//设置小屏幕是否显示返回按钮
+                .showCenterControl(true)//中心是否显示播放暂停
                 .setCompleteToSmall(true)
                 .setOrientationChangeListener(false)
                 .onPrepared(new SuperPlayer.OnPreparedListener() {
@@ -61,9 +62,15 @@ public class MainActivity extends AppCompatActivity implements SuperPlayer.OnNet
 
             }
         }).setTitle("嘎嘎嘎")//设置视频的titleName
-                .play("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=normal",true);//开始播放视频
+        .setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=normal")
+        .play(500);
+//                .play("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=normal",true)
+        ;//开始播放视频
         player.setScaleType(SuperPlayer.SCALETYPE_FITXY);
         player.setPlayerWH(0,player.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
+        Glide.with(this)
+                .load("http://g.hiphotos.baidu.com/image/pic/item/91529822720e0cf349fadbfb0846f21fbe09aaa5.jpg")
+                .into(player.getCoverView());
     }
 
 

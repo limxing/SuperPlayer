@@ -32,6 +32,7 @@ import android.widget.TextView;
 
 import com.superplayer.library.mediaplayer.IRenderView;
 import com.superplayer.library.mediaplayer.IjkVideoView;
+import com.superplayer.library.utils.LoadView;
 import com.superplayer.library.utils.NetUtils;
 import com.superplayer.library.utils.SuperPlayerUtils;
 
@@ -479,7 +480,6 @@ public class SuperPlayer extends RelativeLayout {
             @Override
             public void onPrepared(IMediaPlayer mp) {
                 isPrepare = true;
-
                 new Handler().postDelayed(new Runnable() {
 
                     @Override
@@ -1175,6 +1175,7 @@ public class SuperPlayer extends RelativeLayout {
             if (playerSupport) {
                 status = STATUS_IDLE;
                 videoView.setVideoPath(url);
+
             }
         }
         return this;

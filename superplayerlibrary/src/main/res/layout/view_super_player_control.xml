@@ -3,6 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/video_cover"
+        android:background="#000"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <include layout="@layout/view_super_player_center" />
 
     <!-- bottom -->
@@ -10,5 +16,6 @@
     <include layout="@layout/view_super_player_bottom" />
 
     <include layout="@layout/view_super_player_top" />
+
 
 </RelativeLayout>

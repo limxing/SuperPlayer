@@ -13,9 +13,12 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppThemeNoTitleBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="sensor">
+            android:screenOrientation="sensor"
+            android:theme="@style/AppThemeNoTitleBar">
+
+        </activity>
+        <activity android:name=".LMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -21,6 +21,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -163,6 +164,7 @@ public class IjkVideoView extends FrameLayout implements
 		// MediaFormat>>();
 		mCurrentState = STATE_IDLE;
 		mTargetState = STATE_IDLE;
+
 	}
 
 	public void setRenderView(IRenderView renderView) {

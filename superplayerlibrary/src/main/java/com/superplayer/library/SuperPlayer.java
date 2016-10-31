@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.os.Handler;
@@ -126,6 +127,7 @@ public class SuperPlayer extends RelativeLayout {
     private boolean isOrientationChangeListener;
     private boolean showNavIcon;
     private boolean isCompleteToSmall;
+    private ImageView video_cover;
 
     public SuperPlayer(Context context) {
         this(context, null);
@@ -384,6 +386,25 @@ public class SuperPlayer extends RelativeLayout {
     };
 
     /**
+     * 设置封面
+     *
+     * @param bitmap
+     */
+    public SuperPlayer setCoverImage(Bitmap bitmap) {
+        video_cover.setImageBitmap(bitmap);
+        return this;
+    }
+
+    /**
+     * 获取封面控件
+     *
+     * @return
+     */
+    public ImageView getCoverView() {
+        return video_cover;
+    }
+
+    /**
      * 初始化视图
      */
     public void initView() {
@@ -395,9 +416,12 @@ public class SuperPlayer extends RelativeLayout {
             Log.e("GiraffePlayer", "loadLibraries error", e);
         }
         screenWidthPixels = activity.getResources().getDisplayMetrics().widthPixels;
-        $ = new Query(activity);
+
         contentView = View.inflate(context, R.layout.view_super_player, this);
+
+        $ = new Query(activity);
         videoView = (IjkVideoView) contentView.findViewById(R.id.video_view);
+        video_cover = (ImageView) contentView.findViewById(R.id.video_cover);
         videoView
                 .setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
                     @Override
@@ -560,6 +584,7 @@ public class SuperPlayer extends RelativeLayout {
                 $.id(R.id.view_jky_player_center_play).image(
                         R.drawable.jc_click_play_selector);
             }
+            $.id(R.id.video_cover).visible();
             if (isCompleteToSmall && getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
                 toggleFullScreen();
         } else if (newStatus == STATUS_ERROR) {
@@ -579,15 +604,16 @@ public class SuperPlayer extends RelativeLayout {
                                 R.string.small_problem), "重试");
             }
         } else if (newStatus == STATUS_LOADING) {
-            hideAll();
+//            hideAll();
             $.id(R.id.app_video_loading).visible();
             $.id(R.id.view_jky_player_center_control).gone();
             $.id(R.id.app_video_fastForward_box).gone();
         } else if (newStatus == STATUS_PLAYING) {
 //            hideAll();
             $.id(R.id.app_video_loading).gone();
+            $.id(R.id.view_jky_player_center_control).gone();
             $.id(R.id.view_jky_player_tip_control).gone();
-
+            $.id(R.id.video_cover).gone();
         }
 
     }
@@ -596,8 +622,8 @@ public class SuperPlayer extends RelativeLayout {
      * 隐藏全部的控件
      */
     private void hideAll() {
-        if (status == STATUS_PLAYING)
-            $.id(R.id.view_jky_player_center_control).gone();
+//        if (status == STATUS_PLAYING||status==STATUS_LOADING||status==STATUS_ERROR)
+        $.id(R.id.view_jky_player_center_control).gone();
         $.id(R.id.app_video_loading).gone();
         $.id(R.id.view_jky_player_fullscreen).invisible();
         $.id(R.id.view_jky_player_tip_control).gone();
@@ -630,6 +656,7 @@ public class SuperPlayer extends RelativeLayout {
                 }
             }
             videoView.start();
+            status = STATUS_PLAYING;
         }
     }
 
@@ -792,8 +819,10 @@ public class SuperPlayer extends RelativeLayout {
             $.id(R.id.view_jky_player_tip_control).visible();
         } else {
             if (playerSupport) {
+                status = STATUS_LOADING;
                 $.id(R.id.app_video_loading).visible();
-
+                $.id(R.id.view_jky_player_tip_control).gone();
+                $.id(R.id.video_cover).gone();
                 videoView.setVideoPath(url);
                 if (isLive) {
                     videoView.seekTo(0);
@@ -924,6 +953,11 @@ public class SuperPlayer extends RelativeLayout {
         $.id(R.id.app_video_volume).text(s).visible();
     }
 
+    /**
+     * 滑动改变视频进度
+     *
+     * @param percent
+     */
     private void onProgressSlide(float percent) {
         long position = videoView.getCurrentPosition();
         long duration = videoView.getDuration();
@@ -938,6 +972,7 @@ public class SuperPlayer extends RelativeLayout {
             delta = -position;
         }
         int showDelta = (int) delta / 1000;
+        hideCenter();
         if (showDelta != 0) {
             $.id(R.id.app_video_fastForward_box).visible();
             int image = showDelta > 0 ? R.drawable.jc_forward_icon : R.drawable.jc_backward_icon;
@@ -948,6 +983,15 @@ public class SuperPlayer extends RelativeLayout {
                     generateTime(newPosition) + "/");
             $.id(R.id.app_video_fastForward_all).text(generateTime(duration));
         }
+    }
+
+    private void hideCenter() {
+        $.id(R.id.app_video_loading).gone();
+        $.id(R.id.view_jky_player_center_control).gone();
+        $.id(R.id.view_jky_player_tip_control).gone();
+        $.id(R.id.app_video_brightness_box).gone();
+        $.id(R.id.app_video_volume_box).gone();
+
     }
 
     /**
@@ -1011,9 +1055,8 @@ public class SuperPlayer extends RelativeLayout {
             $.id(R.id.view_jky_player_fullscreen).invisible();
             isShowing = false;
         }
-        if (status != STATUS_PLAYING)
+        if (status != STATUS_PLAYING && status != STATUS_ERROR && status != STATUS_LOADING)
             $.id(R.id.view_jky_player_center_control).visible();
-
 
     }
 
@@ -1096,6 +1139,65 @@ public class SuperPlayer extends RelativeLayout {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 设置播放器路径
+     *
+     * @param url
+     * @return
+     */
+    public SuperPlayer setUrl(String url) {
+        this.url = url;
+        if (!isNetListener) {// 如果设置不监听网络的变化，则取消监听网络变化的广播
+            unregisterNetReceiver();
+        } else {
+            // 注册网路变化的监听
+            registerNetReceiver();
+        }
+        if (videoView != null) {
+            release();
+        }
+        if (isNetListener
+                && (NetUtils.getNetworkType(activity) == 2 || NetUtils
+                .getNetworkType(activity) == 4)) {// 手机网络的情况下
+            $.id(R.id.view_jky_player_tip_control).visible();
+        } else {
+            if (playerSupport) {
+                status = STATUS_IDLE;
+                videoView.setVideoPath(url);
+            }
+        }
+        return this;
+    }
+
+    /**
+     *  执行播放
+     * @param delay 延迟多少播放
+     */
+    public void play(int delay) {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                videoView.start();
+
+            }
+        },delay);
+
+    }
+
+    /**
+     * 执行播放，是否延迟
+     * @param url 路径
+     * @param isDelay 是否延迟
+     */
+    public void play(String url,boolean isDelay){
+        if (isDelay){
+            setUrl(url);
+            play(500);
+        }else{
+            play(url);
+        }
     }
 
     class Query {
@@ -1200,7 +1302,7 @@ public class SuperPlayer extends RelativeLayout {
             float deltaX = mOldX - e2.getX();
             if (firstTouch) {
                 toSeek = Math.abs(distanceX) >= Math.abs(distanceY);
-                volumeControl = mOldX > screenWidthPixels * 0.5f;
+                volumeControl = mOldX > screenWidthPixels * 0.8f;
                 firstTouch = false;
             }
 

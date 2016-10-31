@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/app_video_center_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:background="@drawable/app_video_center_bg"
-        android:visibility="visible" >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="visible">
 
         <!-- 声音控制volume -->
 
@@ -17,9 +16,10 @@
             android:id="@+id/app_video_volume_box"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:background="@drawable/app_video_center_bg"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone" >
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/app_video_volume_icon"
@@ -42,9 +42,10 @@
             android:id="@+id/app_video_brightness_box"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:background="@drawable/app_video_center_bg"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone" >
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/app_video_brightness_icon"
@@ -69,31 +70,31 @@
             android:id="@+id/app_video_fastForward_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:background="@drawable/app_video_center_bg"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone" >
+            android:padding="8dp"
+            android:visibility="gone">
 
             <!--<TextView-->
-                <!--android:id="@+id/app_video_fastForward"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:paddingTop="8dp"-->
-                <!--android:text="50%"-->
-                <!--android:textColor="@android:color/white"-->
-                <!--android:textSize="16sp" />-->
+            <!--android:id="@+id/app_video_fastForward"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingTop="8dp"-->
+            <!--android:text="50%"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="16sp" />-->
             <ImageView
                 android:id="@+id/app_video_fastForward"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                />
+                android:paddingTop="8dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="8dp" >
+                android:paddingTop="8dp">
 
                 <TextView
                     android:id="@+id/app_video_fastForward_target"
@@ -112,7 +113,7 @@
                     android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
-    </FrameLayout>
+    </RelativeLayout>
 
     <!-- 中心播放，暂停 -->
 
@@ -120,9 +121,8 @@
         android:id="@+id/view_jky_player_center_control"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
         android:gravity="center"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/view_jky_player_center_play"
@@ -140,7 +140,7 @@
         android:background="#33000000"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/view_jky_player_tip_text"
@@ -170,18 +170,41 @@
     <!-- loading -->
 
     <!--<ProgressBar-->
-        <!--android:id="@+id/app_video_loading"-->
-        <!--android:layout_width="50dp"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:layout_centerInParent="true"-->
-        <!--android:indeterminateBehavior="repeat"-->
-        <!--android:indeterminateOnly="true"-->
-        <!--android:visibility="gone" />-->
-    <com.superplayer.library.utils.LoadView
+    <!--android:id="@+id/app_video_loading"-->
+    <!--android:layout_width="50dp"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:indeterminateBehavior="repeat"-->
+    <!--android:indeterminateOnly="true"-->
+    <!--android:visibility="gone" />-->
+    <RelativeLayout
         android:id="@+id/app_video_loading"
-        android:layout_width="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#22000000"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.superplayer.library.utils.LoadView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerInside" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="加载中..."
+                android:textColor="#fff"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

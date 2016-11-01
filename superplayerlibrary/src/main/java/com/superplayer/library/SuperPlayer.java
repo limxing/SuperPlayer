@@ -251,6 +251,10 @@ public class SuperPlayer extends RelativeLayout {
         if (status == STATUS_LOADING) {
             $.id(R.id.view_jky_player_center_control).visibility(View.GONE);
         }
+        if (!isPrepare){
+            $.id(R.id.view_jky_player_center_control).visibility(View.GONE);
+            $.id(R.id.app_video_loading).visible();
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package me.leefeng.superplayer;
 import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.superplayer.library.SuperPlayer;
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements SuperPlayer.OnNet
     }
 
     private void initPlayer(){
-        setVolumeControlStream(AudioManager.STREAM_MUSIC); //让音量键固定为媒体音量控制
+//        setVolumeControlStream(AudioManager.STREAM_MUSIC); //让音量键固定为媒体音量控制
         player = (SuperPlayer) findViewById(R.id.view_super_player);
         if(isLive){
             player.setLive(true);//设置该地址是直播的地址
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements SuperPlayer.OnNet
         Glide.with(this)
                 .load("http://g.hiphotos.baidu.com/image/pic/item/91529822720e0cf349fadbfb0846f21fbe09aaa5.jpg")
                 .into(player.getCoverView());
+        player.getCoverView().setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
 

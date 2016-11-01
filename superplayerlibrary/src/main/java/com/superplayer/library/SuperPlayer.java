@@ -26,15 +26,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.superplayer.library.mediaplayer.IRenderView;
 import com.superplayer.library.mediaplayer.IjkVideoView;
 import com.superplayer.library.utils.LoadView;
 import com.superplayer.library.utils.NetUtils;
 import com.superplayer.library.utils.SuperPlayerUtils;
+
+import java.lang.ref.SoftReference;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -90,6 +96,7 @@ public class SuperPlayer extends RelativeLayout {
     private static final int MESSAGE_SEEK_NEW_POSITION = 3;
     private static final int MESSAGE_HIDE_CENTER_BOX = 4;
     private static final int MESSAGE_RESTART_PLAY = 5;
+    private static final int MESSAGE_SET_PROGRESS = 6;
     private Activity activity;
     private Context context;
     private View contentView;
@@ -129,6 +136,7 @@ public class SuperPlayer extends RelativeLayout {
     private boolean showNavIcon;
     private boolean isCompleteToSmall;
     private ImageView video_cover;
+    private ProgressBar progressBar;
 
     public SuperPlayer(Context context) {
         this(context, null);
@@ -279,6 +287,7 @@ public class SuperPlayer extends RelativeLayout {
         }
     }
 
+
     /**
      * 隐藏显示底部控制栏
      *
@@ -287,11 +296,14 @@ public class SuperPlayer extends RelativeLayout {
     private void showBottomControl(boolean show) {
         $.id(R.id.app_video_bottom_box).visibility(
                 show ? View.VISIBLE : View.GONE);
+        $.id(R.id.app_video_bottom_seekbar_box).visibility(
+                show ? View.GONE : View.VISIBLE);
         if (isLive) {// 直播需要隐藏和显示一些底部的一些控件
             $.id(R.id.app_video_play).gone();
             $.id(R.id.app_video_currentTime).gone();
             $.id(R.id.app_video_endTime).gone();
             $.id(R.id.app_video_seekBar).gone();
+            $.id(R.id.app_video_progressBar).gone();
             $.id(R.id.view_jky_player_tv_number).visible();
         }
 
@@ -378,9 +390,14 @@ public class SuperPlayer extends RelativeLayout {
                         sendMessageDelayed(msg, 1000);
                         updatePausePlay();
                     }
+
                     break;
                 case MESSAGE_RESTART_PLAY:
                     play(url);
+                    break;
+                case MESSAGE_SET_PROGRESS:
+                    setProgressBar();
+                    handler.sendEmptyMessageDelayed(MESSAGE_SET_PROGRESS, 1000);
                     break;
             }
         }
@@ -395,6 +412,7 @@ public class SuperPlayer extends RelativeLayout {
         video_cover.setImageBitmap(bitmap);
         return this;
     }
+
     /**
      * 设置封面
      *
@@ -453,6 +471,7 @@ public class SuperPlayer extends RelativeLayout {
         videoView.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
             @Override
             public boolean onInfo(IMediaPlayer mp, int what, int extra) {
+
                 switch (what) {
                     case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
                         statusChange(STATUS_LOADING);
@@ -462,8 +481,8 @@ public class SuperPlayer extends RelativeLayout {
                         break;
                     case IMediaPlayer.MEDIA_INFO_NETWORK_BANDWIDTH:
                         // 显示 下载速度
-                        // Toast.makeText(activity,"download rate:" +
-                        // extra,Toast.LENGTH_SHORT).show();
+//                         Toast.makeText(activity,"download rate:" +
+//                         extra,Toast.LENGTH_SHORT).show();
                         break;
                     case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
                         statusChange(STATUS_PLAYING);
@@ -484,8 +503,11 @@ public class SuperPlayer extends RelativeLayout {
 
                     @Override
                     public void run() {
-                        hide(false);
-                        show(defaultTimeout);
+//                        hide(false);
+//                        show(defaultTimeout);
+                        $.id(R.id.app_video_loading).gone();
+                        if (status != STATUS_PLAYING)
+                            $.id(R.id.view_jky_player_center_control).visible();
                     }
                 }, 500);
                 if (onPreparedListener != null) {
@@ -495,7 +517,9 @@ public class SuperPlayer extends RelativeLayout {
         });
 
         seekBar = (SeekBar) contentView.findViewById(R.id.app_video_seekBar);
+        progressBar = (ProgressBar) contentView.findViewById(R.id.app_video_progressBar);
         seekBar.setMax(1000);
+        progressBar.setMax(1000);
         seekBar.setOnSeekBarChangeListener(mSeekListener);
         $.id(R.id.app_video_play).clicked(onClickListener);
         $.id(R.id.view_jky_player_fullscreen).clicked(onClickListener);
@@ -560,7 +584,18 @@ public class SuperPlayer extends RelativeLayout {
             showStatus(activity.getResources().getString(R.string.not_support),
                     "重试");
         }
+
+        handler.sendEmptyMessageDelayed(MESSAGE_SET_PROGRESS, 1000);
+
+//        new Timer().schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                if (handler != null)
+//                    handler.sendEmptyMessage(MESSAGE_SET_PROGRESS);
+//            }
+//        }, 1000, 0);
     }
+
 
     /**
      * 手势结束
@@ -645,7 +680,7 @@ public class SuperPlayer extends RelativeLayout {
      */
     public void onPause() {
         pauseTime = System.currentTimeMillis();
-        show(0);// 把系统状态栏显示出来
+//        show(0);// 把系统状态栏显示出来
         if (status == STATUS_PLAYING) {
             videoView.pause();
             if (!isLive) {
@@ -1033,6 +1068,19 @@ public class SuperPlayer extends RelativeLayout {
 
     }
 
+    private void setProgressBar() {
+        if (status == STATUS_PLAYING) {
+            long position = videoView.getCurrentPosition();
+            long duration = videoView.getDuration();
+            if (duration > 0) {
+                long pos = 1000L * position / duration;
+                int percent = videoView.getBufferPercentage();
+                progressBar.setProgress((int) pos);
+                progressBar.setSecondaryProgress(percent * 10);
+            }
+        }
+    }
+
     private long setProgress() {
         if (isDragging) {
             return 0;
@@ -1040,13 +1088,19 @@ public class SuperPlayer extends RelativeLayout {
 
         long position = videoView.getCurrentPosition();
         long duration = videoView.getDuration();
-        if (seekBar != null) {
-            if (duration > 0) {
-                long pos = 1000L * position / duration;
-                seekBar.setProgress((int) pos);
-            }
+//        Toast.makeText(context,position+"="+duration,Toast.LENGTH_SHORT).show();
+        if (duration > 0) {
+            long pos = 1000L * position / duration;
             int percent = videoView.getBufferPercentage();
-            seekBar.setSecondaryProgress(percent * 10);
+            if (seekBar != null) {
+
+                seekBar.setProgress((int) pos);
+
+                seekBar.setSecondaryProgress(percent * 10);
+
+            }
+            progressBar.setProgress((int) pos);
+            progressBar.setSecondaryProgress(percent * 10);
         }
 
         this.duration = duration;
@@ -1175,37 +1229,43 @@ public class SuperPlayer extends RelativeLayout {
             if (playerSupport) {
                 status = STATUS_IDLE;
                 videoView.setVideoPath(url);
-
+                $.id(R.id.view_jky_player_center_control).visible();
             }
         }
         return this;
     }
 
     /**
-     *  执行播放
+     * 执行播放
+     *
      * @param delay 延迟多少播放
      */
     public void play(int delay) {
         postDelayed(new Runnable() {
             @Override
             public void run() {
+                status = STATUS_LOADING;
+                $.id(R.id.app_video_loading).visible();
+                $.id(R.id.view_jky_player_tip_control).gone();
+                $.id(R.id.view_jky_player_center_control).gone();
+//                $.id(R.id.video_cover).gone();
                 videoView.start();
-
             }
-        },delay);
+        }, delay);
 
     }
 
     /**
      * 执行播放，是否延迟
-     * @param url 路径
+     *
+     * @param url     路径
      * @param isDelay 是否延迟
      */
-    public void play(String url,boolean isDelay){
-        if (isDelay){
+    public void play(String url, boolean isDelay) {
+        if (isDelay) {
             setUrl(url);
             play(500);
-        }else{
+        } else {
             play(url);
         }
     }
@@ -1716,4 +1776,6 @@ public class SuperPlayer extends RelativeLayout {
         isCompleteToSmall = completeToSmall;
         return this;
     }
+
+
 }

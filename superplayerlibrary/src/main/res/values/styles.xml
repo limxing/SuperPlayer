@@ -9,8 +9,8 @@
         <item name="android:thumb">@drawable/ic_circles</item>
         <item name="android:minHeight">5dip</item>
         <item name="android:maxHeight">5dip</item>
-        <item name="android:paddingLeft">5.0dip</item>
-        <item name="android:paddingRight">5.0dip</item>
+        <item name="android:paddingLeft">5dip</item>
+        <item name="android:paddingRight">5dip</item>
     </style>
     <!-- 播放器进度条end-->
 

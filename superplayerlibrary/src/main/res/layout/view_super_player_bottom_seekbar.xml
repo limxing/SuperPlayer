@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/app_video_bottom_seekbar_box"
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:layout_alignParentBottom="true"
+    android:visibility="visible">
+
+    <!--<item name="android:minHeight">5dip</item>-->
+
+    <!--<item name="android:maxHeight">5dip</item>-->
+
+    <!--<item name="android:paddingLeft">5dip</item>-->
+
+    <!--<item name="android:paddingRight">5dip</item>-->
+
+    <ProgressBar
+        android:id="@+id/app_video_progressBar"
+        android:layout_width="match_parent"
+        android:thumb="@null"
+        android:layout_height="2dp"
+        android:layout_centerVertical="true"
+        android:focusable="false"
+        android:indeterminateOnly="false"
+        android:progress="0"
+        android:progressDrawable="@drawable/uvv_star_play_progress_seek_small"
+        />
+
+
+</RelativeLayout>

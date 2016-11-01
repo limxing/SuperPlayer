@@ -128,7 +128,7 @@
             android:id="@+id/view_jky_player_center_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/jc_click_pause_selector" />
+            android:src="@drawable/jc_click_play_selector" />
     </LinearLayout>
 
     <!-- 网络提示 -->

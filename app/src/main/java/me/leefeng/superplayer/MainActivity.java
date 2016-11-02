@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements SuperPlayer.OnNet
         }
         player.setNetChangeListener(true)//设置监听手机网络的变化
                 .setOnNetChangeListener(this)//实现网络变化的回调
-                .setShowNavIcon(false)//设置小屏幕是否显示返回按钮
+                .setShowNavIcon(true)//设置小屏幕是否显示返回按钮
                 .showCenterControl(true)//中心是否显示播放暂停
                 .setCompleteToSmall(true)
                 .setOrientationChangeListener(false)

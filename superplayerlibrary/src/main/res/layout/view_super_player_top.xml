@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:src="@drawable/ic_back" />
+            android:src="@drawable/back" />
 
         <LinearLayout
             android:id="@+id/view_jky_player_top_right"

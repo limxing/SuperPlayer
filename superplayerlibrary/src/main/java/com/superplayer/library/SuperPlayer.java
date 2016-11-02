@@ -162,10 +162,13 @@ public class SuperPlayer extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.view_jky_player_fullscreen) {
+
                 toggleFullScreen();
             } else if (v.getId() == R.id.app_video_play) {
-                doPauseResume();
-                show(defaultTimeout);
+                if (isPrepare) {
+                    doPauseResume();
+                    show(defaultTimeout);
+                }
             } else if (v.getId() == R.id.view_jky_player_center_play) {
                 // videoView.seekTo(0);
                 // videoView.start();
@@ -253,7 +256,7 @@ public class SuperPlayer extends RelativeLayout {
         if (status == STATUS_LOADING) {
             $.id(R.id.view_jky_player_center_control).visibility(View.GONE);
         }
-        if (!isPrepare){
+        if (!isPrepare) {
             $.id(R.id.view_jky_player_center_control).visibility(View.GONE);
             $.id(R.id.app_video_loading).visible();
         }
@@ -269,7 +272,8 @@ public class SuperPlayer extends RelativeLayout {
             showTopControl(false);
             return;
         }
-        if (!isShowing && isPrepare) {
+        //11.2 修改了没有准备好就显示返回按钮
+        if (!isShowing) {
             if (!isShowTopControl && portrait) {
                 showTopControl(false);
             } else {
@@ -736,7 +740,12 @@ public class SuperPlayer extends RelativeLayout {
                     if (portrait) {
                         int screenWidth = SuperPlayerUtils.getScreenWidth(activity);
                         ViewGroup.LayoutParams layoutParams = getLayoutParams();
-                        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//                        if (!showNavIcon) {
+//                            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//                        } else {
+//                            activity.getWindow().addFlags(
+//                                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//                        }
                         if (initWidth == 0) {
                             layoutParams.width = screenWidth;
                         } else {
@@ -805,7 +814,8 @@ public class SuperPlayer extends RelativeLayout {
                 activity.getWindow().addFlags(
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             } else {
-                attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                if (!showNavIcon)
+                    attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 activity.getWindow().setAttributes(attrs);
                 activity.getWindow().clearFlags(
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -1371,7 +1381,7 @@ public class SuperPlayer extends RelativeLayout {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                                 float distanceX, float distanceY) {
-            if (!isSupportGesture && portrait) {
+            if (!isSupportGesture && portrait || !isPrepare) {
                 return super.onScroll(e1, e2, distanceX, distanceY);
             }
             float mOldX = e1.getX(), mOldY = e1.getY();
@@ -1400,9 +1410,10 @@ public class SuperPlayer extends RelativeLayout {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            if (!isPrepare) {// 视频没有初始化点击屏幕不起作用
-                return false;
-            }
+            //11.2 修改了没有准备好就显示返回按钮
+//            if (!isPrepare) {// 视频没有初始化点击屏幕不起作用
+//                return false;
+//            }
             if (isShowing) {
                 hide(false);
             } else {
@@ -1434,6 +1445,7 @@ public class SuperPlayer extends RelativeLayout {
      * 停止播放
      */
     public void stop() {
+        $.id(R.id.video_cover).visible();
         if (videoView.isPlaying()) {
             videoView.stopPlayback();
         }

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.os.Handler;
@@ -173,6 +174,7 @@ public class SuperPlayer extends RelativeLayout {
             } else if (v.getId() == R.id.app_video_finish) {
                 if (!fullScreenOnly && !portrait) {
                     activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//                   toggleFullScreen();
                 } else {
                     activity.finish();
                 }
@@ -447,6 +449,7 @@ public class SuperPlayer extends RelativeLayout {
         } catch (Throwable e) {
             Log.e("GiraffePlayer", "loadLibraries error", e);
         }
+        setBackgroundColor(Color.BLACK);
         screenWidthPixels = activity.getResources().getDisplayMetrics().widthPixels;
 
         contentView = View.inflate(context, R.layout.view_super_player, this);
